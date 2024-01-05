@@ -5,6 +5,7 @@ RSS Aggregator API with AI-powered search and ranked feed
 - REST JSON API that aggregates RSS feeds from multiple sources defined via environment variables
 - Hosted on Cloudflare Workers optimized for scale to zero costs with scalability
 - Learning opportunity to use embeddings and vectorization for search and ranking
+- Project for 12in24 TriDev initiative
 - Make ranking algorithm weights customizable and configurable via environment variables
 
 ### Process
