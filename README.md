@@ -7,6 +7,7 @@ RSS Aggregator API with AI-powered search and ranked feed
 - Learning opportunity to use embeddings and vectorization for search and ranking
 - Project for 12in24 TriDev initiative
 - Make ranking algorithm weights customizable and configurable via environment variables
+- Include GitHub Actions for CI/CD
 
 ### Process
 - CRON to get newly updated RSS feeds and update ranked feed
