@@ -8,7 +8,8 @@ app.get('/', (c) => {
 })
 
 app.get('/rss', async (c) => {
-  const url = 'https://crtv.dev/feed';
+  //const url = 'https://crtv.dev/feed'; // ghost site
+  const url = 'https://ryanhayes.net/feed/'; // wordpress site
   if (!url) {
     return c.text('Please provide a url');
   }

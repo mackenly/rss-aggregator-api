@@ -1,6 +1,9 @@
 # RSS Aggregator API
 RSS Aggregator API with AI-powered search and ranked feed
 
+Suggestion from Jake:
+Explore [pgvector](https://github.com/pgvector/pgvector) and SQLite options for vector database.
+
 ## Goals
 - REST JSON API that aggregates RSS feeds from multiple sources defined via environment variables
 - Hosted on Cloudflare Workers optimized for scale to zero costs with scalability
