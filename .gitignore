@@ -2,8 +2,6 @@ dist
 node_modules
 .wrangler/*
 worker
-package-lock.json
-yarn.lock
 .cargo-ok
 
 # Output of 'npm pack'
