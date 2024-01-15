@@ -1,4 +1,6 @@
 # RSS Aggregator API
+[![Run Tests](https://github.com/mackenly/rss-aggregator-api/actions/workflows/tests.yml/badge.svg)](https://github.com/mackenly/rss-aggregator-api/actions/workflows/tests.yml)
+
 RSS Aggregator API with AI-powered search and ranked feed
 
 Suggestion from Jake:
