@@ -98,7 +98,6 @@ classDiagram
         class item_vector_linking {
             id: integer
             item_id: integer
-            vector_id: string
             created_at: datetime
         }
     }
