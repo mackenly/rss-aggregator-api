@@ -46,6 +46,7 @@ classDiagram
             id: integer
             owner_id: integer
             rss_id: string
+            rss_url: string
             title: string
             link: string
             description: string
@@ -74,6 +75,8 @@ classDiagram
     namespace items {
         class item{
             id: integer
+            site_id: integer
+            owner_id: integer
             rss_id: string
             title: string
             description: string
