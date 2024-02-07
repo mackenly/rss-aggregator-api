@@ -26,7 +26,12 @@ export async function addFeed(env: Bindings, url: string, owner_id: number = 0) 
     }
 
     // fetch the feed
-    const feedData = await ParseRSSFeed(url)
+    let feedData;
+    try {
+        feedData = await ParseRSSFeed(url)
+    } catch (error) {
+        throw new Error('Failed to fetch feed: ' + error.message)
+    }
     
     const { id, title, link, description, updated } = feedData
     const hash = 'nothing for now'
@@ -50,7 +55,12 @@ export async function updateFeed(env: Bindings, id: number, owner_id: number = 0
     const url = feed.results[0].url as string
 
     // fetch the feed
-    const feedData = await ParseRSSFeed(url)
+    let feedData;
+    try {
+        feedData = await ParseRSSFeed(url)
+    } catch (error) {
+        throw new Error('Failed to fetch feed: ' + error.message)
+    }
     
     const { title, link, description, updated } = feedData
     const rss_id = feedData.id

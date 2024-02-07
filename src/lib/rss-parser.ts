@@ -17,8 +17,6 @@ export async function ParseRSSFeed(url: string) {
             return feed;
         })
         .catch(error => {
-            throw error;
+            return new Error('Failed to fetch feed: ' + error.message);
         });
-    
-    return feed;
 }
