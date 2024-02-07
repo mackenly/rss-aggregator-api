@@ -37,7 +37,7 @@ app.post('/sites', async (c) => {
     const result = await addFeed(c.env, body.url)
     return c.json(result)
   } catch (error) {
-    return c.text(error.message)
+    return c.json(error.message)
   }
 })
 

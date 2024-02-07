@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { UnstableDevWorker } from "wrangler";
 import { unstable_dev } from "wrangler";
 
-describe("Feed Processor", () => {
+describe.sequential("Feed Processor", () => {
 
     let worker: UnstableDevWorker;
 
