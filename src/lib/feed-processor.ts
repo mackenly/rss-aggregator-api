@@ -33,12 +33,17 @@ export async function addFeed(env: Bindings, url: string, owner_id: number = 0) 
         throw new Error('Failed to fetch feed: ' + error.message)
     }
     
-    const { id, title, link, description, updated } = feedData
+    const { title, link, description } = feedData
+    const updated = new Date().toISOString()
+    let rss_id = url;
+    if (feedData.id !== undefined) {
+        rss_id = feedData.id;
+    }
     const hash = 'nothing for now'
 
     // insert feed into db
     try {
-        const record = await env.DB.prepare('INSERT INTO site (owner_id, rss_id, rss_url, title, link, description, hash) VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING id').bind(owner_id, id, url, title, link, description, hash).run()
+        const record = await env.DB.prepare('INSERT INTO site (owner_id, rss_id, rss_url, title, link, description, hash, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id').bind(owner_id, rss_id, url, title, link, description, hash, updated).run()
         return record.results[0]
     } catch (error) {
         throw new Error('Failed to insert feed into db: ' + error.message)
@@ -62,8 +67,12 @@ export async function updateFeed(env: Bindings, id: number, owner_id: number = 0
         throw new Error('Failed to fetch feed: ' + error.message)
     }
     
-    const { title, link, description, updated } = feedData
-    const rss_id = feedData.id
+    const { title, link, description } = feedData
+    const updated = new Date().toISOString()
+    let rss_id = url;
+    if (feedData.id !== undefined) {
+        rss_id = feedData.id;
+    }
     const hash = 'nothing for now'
     const currentDate = new Date().toISOString()
 

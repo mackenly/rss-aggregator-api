@@ -21,7 +21,7 @@ describe.sequential("Feed Processor", () => {
         expect(response.status).toBe(200);
         expect(response.headers.get("content-type")).toBe("application/json; charset=UTF-8");
         const responseBody: any = await response.json();
-        expect(responseBody).toBe("Setup complete");
+        expect(responseBody).toEqual({ message: "Setup complete" });
     });
 
     it("sites should return 200 response when no sites exist", async () => {

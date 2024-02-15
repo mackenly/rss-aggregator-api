@@ -14,7 +14,7 @@ app.get('/', (c) => {
 app.get('/setup', async (c) => {
   try {
     await setupDb(c.env, true)
-    return c.json('Setup complete')
+    return c.json({ message: 'Setup complete' })
   } catch (error) {
     return c.json(error.message)
   }
