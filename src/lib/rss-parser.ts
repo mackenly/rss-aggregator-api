@@ -10,13 +10,23 @@ export async function ParseRSSFeed(url: string) {
     }
 
     // fetch the feed
-    const feed = await fetch(url)
+    const feed = await fetchUrl(url).then(parseFeed);
+    return feed;
+}
+
+async function fetchUrl(url: string) {
+    return fetch(url)
         .then(response => response.text())
-        .then(data => {
-            return htmlparser2.parseFeed(data);
-        })
         .catch(error => {
             return new Error('Failed to fetch feed: ' + error.message);
         });
-    return feed;
+}
+
+function parseFeed(data: string) {
+    return htmlparser2.parseFeed(data);
+}
+
+export const testFunctions = {
+    fetchUrl,
+    parseFeed
 }
