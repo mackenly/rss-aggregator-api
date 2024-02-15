@@ -13,8 +13,7 @@ export async function ParseRSSFeed(url: string) {
     const feed = await fetch(url)
         .then(response => response.text())
         .then(data => {
-            const feed = htmlparser2.parseFeed(data);
-            return feed;
+            return htmlparser2.parseFeed(data);
         })
         .catch(error => {
             return new Error('Failed to fetch feed: ' + error.message);
