@@ -8,7 +8,7 @@ import { Bindings } from '../worker-configuration';
 const app = new Hono<{ Bindings: Bindings }>()
 
 app.get('/', (c) => {
-  return c.text('Hello World!');
+  return c.json({ message: 'Hello World!' });
 })
 
 app.get('/setup', async (c) => {
