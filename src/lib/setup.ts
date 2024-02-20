@@ -82,7 +82,7 @@ export async function setupDb(env: Bindings, overwrite: boolean = false) {
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )`).run();
     } catch (error) {
-        throw new Error('Failed to create table: ' + error.message);
+        throw new Error('Failed to create item table: ' + error.message);
     }
 
     // create item_meta table

@@ -15,18 +15,15 @@ describe.sequential("Feed Processor", () => {
     beforeAll(async () => {
         platform = await getPlatformProxy();
         env = platform.env;
+        
+        await setupDb(env, true);
     });
 
     afterAll(async () => {
         await platform.dispose();
     });
 
-    it("setup should return true", async () => {
-        const result = await setupDb(env, true);
-        expect(result).toBe(true);
-    });
-
-    it("no sites should exist", async () => {
+    it("should beb no sites exist", async () => {
         const result = await getFeeds(env);
         expect(result).toEqual([]);
     });
