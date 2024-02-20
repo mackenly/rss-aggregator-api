@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import type { UnstableDevWorker, PlatformProxy } from "wrangler";
-import { unstable_dev, getPlatformProxy } from "wrangler";
+import type { PlatformProxy } from "wrangler";
+import { getPlatformProxy } from "wrangler";
 import fs from "fs";
 
 import { setupDb } from "./setup";
@@ -9,20 +9,15 @@ import { testFunctions } from "./rss-parser";
 
 describe.sequential("Feed Processor", () => {
 
-    let worker: UnstableDevWorker;
     let platform: PlatformProxy;
     let env: any;
 
     beforeAll(async () => {
-        worker = await unstable_dev("src/index.ts", {
-            experimental: { disableExperimentalWarning: false },
-        });
         platform = await getPlatformProxy();
         env = platform.env;
     });
 
     afterAll(async () => {
-        await worker.stop();
         await platform.dispose();
     });
 
