@@ -10,32 +10,36 @@ export async function getFeeds(env: Bindings) {
     return results
 }
 
-// add a new feed
-export async function addFeed(env: Bindings, url: string, owner_id: number = 0) {
+// fetch a feed
+export async function fetchFeedData(env: Bindings, url: URL, canExist: boolean = true) {
     // check if feed exists
-    const feed = await env.DB.prepare('SELECT * FROM site WHERE rss_id = ?').bind(url).all()
-    if (feed.results.length > 0) {
-        throw new Error('Feed already exists')
+    if (!canExist) {
+        const feed = await env.DB.prepare('SELECT * FROM site WHERE rss_id = ?').bind(url).all()
+        if (feed.results.length > 0) {
+            throw new Error('Feed already exists');
+        }
     }
 
     // validate the url
     try {
-        ValidateFeedUrl(url)
+        ValidateFeedUrl(url.toString())
     } catch (error) {
         throw new Error('Invalid URL: ' + error.message)
     }
 
     // fetch the feed
-    let feedData;
     try {
-        feedData = await ParseRSSFeed(url)
+        return await ParseRSSFeed(url)
     } catch (error) {
         throw new Error('Failed to fetch feed: ' + error.message)
     }
-    
+}
+
+// add a new feed
+export async function addFeed(env: Bindings, feedData: any, url: URL, owner_id: number = 0) {
     const { title, link, description } = feedData
     const updated = new Date().toISOString()
-    let rss_id = url;
+    let rss_id = url.toString();
     if (feedData.id !== undefined) {
         rss_id = feedData.id;
     }
@@ -43,7 +47,7 @@ export async function addFeed(env: Bindings, url: string, owner_id: number = 0) 
 
     // insert feed into db
     try {
-        const record = await env.DB.prepare('INSERT INTO site (owner_id, rss_id, rss_url, title, link, description, hash, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id').bind(owner_id, rss_id, url, title, link, description, hash, updated).run()
+        const record = await env.DB.prepare('INSERT INTO site (owner_id, rss_id, rss_url, title, link, description, hash, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id').bind(owner_id, rss_id, url.toString(), title, link, description, hash, updated).all()
         return record.results[0]
     } catch (error) {
         throw new Error('Failed to insert feed into db: ' + error.message)
@@ -57,19 +61,14 @@ export async function updateFeed(env: Bindings, id: number, owner_id: number = 0
     if (feed.results.length === 0) {
         throw new Error('Feed does not exist')
     }
-    const url = feed.results[0].url as string
+    const url: URL = new URL(feed.results[0]['rss_url'].toString())
 
     // fetch the feed
-    let feedData;
-    try {
-        feedData = await ParseRSSFeed(url)
-    } catch (error) {
-        throw new Error('Failed to fetch feed: ' + error.message)
-    }
+    const feedData = await fetchFeedData(env, url)
     
     const { title, link, description } = feedData
     const updated = new Date().toISOString()
-    let rss_id = url;
+    let rss_id = url.toString();
     if (feedData.id !== undefined) {
         rss_id = feedData.id;
     }
@@ -78,7 +77,8 @@ export async function updateFeed(env: Bindings, id: number, owner_id: number = 0
 
     // update feed in db
     try {
-        await env.DB.prepare('UPDATE site SET owner_id = ?, rss_id = ?, rss_url = ?, title = ?, link = ?, description = ?, hash = ?, checked_at = ?, updated_at = ? WHERE id = ?').bind(owner_id, rss_id, url, title, link, description, hash, currentDate, updated, id).run()
+        await env.DB.prepare('UPDATE site SET owner_id = ?, rss_id = ?, rss_url = ?, title = ?, link = ?, description = ?, hash = ?, checked_at = ?, updated_at = ? WHERE id = ?').bind(owner_id, rss_id, url.toString(), title, link, description, hash, currentDate, updated, id).run()
+        return true
     } catch (error) {
         throw new Error('Failed to update feed in db: ' + error.message)
     }

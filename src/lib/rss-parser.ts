@@ -1,10 +1,14 @@
 import { ValidateFeedUrl } from './validators';
 import * as htmlparser2 from 'htmlparser2';
 
-export async function ParseRSSFeed(url: string) {
+export async function ParseRSSFeed(url: URL | string) {
+    if (typeof url === 'string') {
+        url = new URL(url);
+    }
+
     // validate the url
     try {
-        ValidateFeedUrl(url);
+        ValidateFeedUrl(url.toString());
     } catch (error) {
         throw error;
     }
@@ -14,7 +18,7 @@ export async function ParseRSSFeed(url: string) {
     return feed;
 }
 
-async function fetchUrl(url: string) {
+async function fetchUrl(url: URL) {
     return fetch(url)
         .then(response => response.text())
         .catch(error => {

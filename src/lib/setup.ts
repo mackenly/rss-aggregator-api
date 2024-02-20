@@ -133,4 +133,6 @@ export async function setupDb(env: Bindings, overwrite: boolean = false) {
     } catch (error) {
         throw new Error('Failed to modify item_vector_linking table: ' + error.message);
     }
+
+    return true;
 }

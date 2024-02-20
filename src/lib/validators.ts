@@ -26,5 +26,12 @@ export function ValidateFeedUrl(url: string) {
         throw new Error('Invalid URL: not a valid URL');
     }
 
+    // if can be a URL
+    try {
+        new URL(url);
+    } catch (error) {
+        throw new Error('Invalid URL: ' + error.message);
+    }
+
     return;
 }

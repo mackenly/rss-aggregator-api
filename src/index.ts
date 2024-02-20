@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 import { ParseRSSFeed } from './lib/rss-parser';
 import { createEmbedding, similarEmbeddingIds } from './lib/embeddings';
 import { setupDb } from './lib/setup';
-import { getFeeds, addFeed, deleteFeed, updateFeed } from './lib/feed-processor';
+import { getFeeds, addFeed, deleteFeed, updateFeed, fetchFeedData } from './lib/feed-processor';
 import { Bindings } from '../worker-configuration';
 
 const app = new Hono<{ Bindings: Bindings }>()
@@ -34,7 +34,9 @@ app.post('/sites', async (c) => {
     if (!body.url) {
       return c.json('Please provide a url')
     }
-    const result = await addFeed(c.env, body.url)
+    const url = new URL(body.url)
+    const feedData = await fetchFeedData(c.env, body.url, false)
+    const result = await addFeed(c.env, feedData, url)
     return c.json(result)
   } catch (error) {
     return c.json(error.message)
