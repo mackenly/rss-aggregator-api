@@ -55,7 +55,7 @@ export async function addFeed(env: Bindings, feedData: any, url: URL, owner_id: 
 }
 
 // update a feed
-export async function updateFeed(env: Bindings, id: number, owner_id: number = 0) {
+export async function updateFeed(env: Bindings, id: number, owner_id: number = 0, feedData: any = null) {
     // check if feed exists
     const feed = await env.DB.prepare('SELECT * FROM site WHERE id = ?').bind(id).all()
     if (feed.results.length === 0) {
@@ -64,7 +64,13 @@ export async function updateFeed(env: Bindings, id: number, owner_id: number = 0
     const url: URL = new URL(feed.results[0]['rss_url'].toString())
 
     // fetch the feed
-    const feedData = await fetchFeedData(env, url)
+    if (feedData === null) {
+        try {
+            feedData = await fetchFeedData(env, url, false)
+        } catch (error) {
+            throw new Error('Failed to fetch feed: ' + error.message)
+        }
+    }
     
     const { title, link, description } = feedData
     const updated = new Date().toISOString()
