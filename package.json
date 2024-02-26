@@ -10,11 +10,11 @@
   },
   "license": "AGPL-3.0-or-later",
   "dependencies": {
-    "@cloudflare/ai": "^1.0.50",
     "hono": "^2.5.7",
     "htmlparser2": "^9.1.0"
   },
   "devDependencies": {
+    "@cloudflare/ai": "^1.0.50",
     "@cloudflare/workers-types": "^4.20240208.0",
     "esbuild": "^0.15.15",
     "vitest": "^1.2.1",
