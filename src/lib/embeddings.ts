@@ -21,18 +21,8 @@ export async function createEmbedding(env: Bindings, itemId: number, text: strin
         throw new Error('No itemId provided');
     }
 
-    // create table if it doesn't exist
-    try {
-        // create item table
-        //await env.DB.prepare("DROP TABLE IF EXISTS item").run();
-        //await env.DB.prepare("CREATE TABLE IF NOT EXISTS item (id INTEGER PRIMARY KEY AUTOINCREMENT, rss_id STRING NOT NULL, title STRING NOT NULL, description STRING NOT NULL, link STRING NOT NULL, hash STRING NOT NULL, checked_at DATETIME DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME DEFAULT CURRENT_TIMESTAMP, created_at DATETIME DEFAULT CURRENT_TIMESTAMP)").run();
-        await env.DB.prepare("INSERT INTO item (id, rss_id, title, description, link, hash) VALUES (4, '1', 'quiz', '1', '1', '1')").run();
-        // create item_vector_linking table
-        //await env.DB.prepare("DROP TABLE IF EXISTS item_vector_linking").run();
-        await env.DB.prepare("CREATE TABLE IF NOT EXISTS item_vector_linking (id INTEGER PRIMARY KEY AUTOINCREMENT, item_id INTEGER NOT NULL, created_at DATETIME DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME DEFAULT CURRENT_TIMESTAMP)").run();
-    } catch (error) {
-        throw new Error('Failed to create table: ' + error.message);
-    }
+    // clean up text
+    text = text.trim();
 
     // check if item already has an embedding
     try {
@@ -46,13 +36,19 @@ export async function createEmbedding(env: Bindings, itemId: number, text: strin
         throw new Error(`Failed to check if embedding exists for ${itemId}: ${error.message}`);
     }
 
-    const ai = new Ai(env.AI);
-
-    // clean up text
-    text = text.trim();
+    let ai;
+    try {
+        ai = new Ai(env.AI);
+    } catch (error) {
+        throw new Error('Failed to create AI instance: ' + error.message);
+    }
 
     // create embedding
-    const { data } = await ai.run('@cf/baai/bge-base-en-v1.5', { text: [text] });
+    const model = '@cf/baai/bge-base-en-v1.5';
+    const { data } = await ai.run(model, { text: [text] })
+    .catch((error: Error) => {
+        throw new Error(`Failed to create embedding with ${model}: ` + error.message);
+    });
     const values = data[0];
 
     if (!values) {
@@ -67,19 +63,23 @@ export async function createEmbedding(env: Bindings, itemId: number, text: strin
         throw new Error('Failed to insert embedding into db: ' + error.message);
     }
 
-    // get embedding id
-    const { id } = record.results[0];
-    const inserted = await env.VECTORIZE_INDEX.upsert([
-        {
-            id: id.toString(),
-            values,
-        }
-    ]);
+    try {
+        // get embedding id
+        const { id } = record.results[0];
+        const inserted = await env.VECTORIZE_INDEX.upsert([
+            {
+                id: id.toString(),
+                values,
+            }
+        ]);
 
-    return {
-        id,
-        itemId
-    };
+        return {
+            id,
+            itemId
+        };
+    } catch (error) {
+        throw new Error('Failed to insert embedding into vector index: ' + error.message);
+    }
 }
 
 /**
@@ -106,7 +106,13 @@ export async function deleteItemEmbedding(env: Bindings, item_id: number) {
     try {
         await env.VECTORIZE_INDEX.deleteByIds([item_id.toString()]);
     } catch (error) {
-        throw new Error('Failed to delete embedding from vector index: ' + error.message);
+        if (error.message.includes("Cannot read properties of undefined (reading 'deleteByIds')")) {
+            // soft fail if vector index is not available
+            console.log('Vector index is not available');
+            return true;
+        } else {
+            throw new Error('Failed to delete embedding from vector index: ' + error.message);
+        }
     }
 
     return true;

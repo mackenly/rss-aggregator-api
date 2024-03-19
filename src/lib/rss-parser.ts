@@ -1,7 +1,7 @@
 import { ValidateFeedUrl } from './validators';
 import * as htmlparser2 from 'htmlparser2';
 
-export async function ParseRSSFeed(url: URL | string) {
+export async function ParseRSSFeed(url: URL) {
     if (typeof url === 'string') {
         url = new URL(url);
     }
@@ -19,18 +19,13 @@ export async function ParseRSSFeed(url: URL | string) {
 }
 
 async function fetchUrl(url: URL) {
-    return fetch(url)
+    return fetch(url.toString())
         .then(response => response.text())
         .catch(error => {
-            return new Error('Failed to fetch feed: ' + error.message);
+            throw new Error('Failed to fetch feed: ' + error.message);
         });
 }
 
-function parseFeed(data: string) {
+export function parseFeed(data: string) {
     return htmlparser2.parseFeed(data);
-}
-
-export const testFunctions = {
-    fetchUrl,
-    parseFeed
 }

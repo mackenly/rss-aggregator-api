@@ -79,7 +79,8 @@ export async function setupDb(env: Bindings, overwrite: boolean = false) {
             hash STRING NOT NULL, 
             checked_at DATETIME DEFAULT CURRENT_TIMESTAMP, 
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP, 
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (site_id) REFERENCES site(id)
         )`).run();
     } catch (error) {
         throw new Error('Failed to create item table: ' + error.message);
@@ -124,8 +125,7 @@ export async function setupDb(env: Bindings, overwrite: boolean = false) {
         }
         await env.DB.prepare(`CREATE TABLE IF NOT EXISTS item_vector_linking (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            item_id INTEGER NOT NULL, 
-            vector_id STRING NOT NULL, 
+            item_id INTEGER NOT NULL,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (item_id) REFERENCES item(id)

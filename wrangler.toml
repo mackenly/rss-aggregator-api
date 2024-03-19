@@ -2,6 +2,7 @@ name="rss-aggregator-api"
 main="src/index.ts"
 
 compatibility_date = "2022-11-22"
+compatibility_flags = [ "nodejs_compat" ]
 
 [vars]
 SIMILARITY_CUTOFF = 0.1

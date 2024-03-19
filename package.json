@@ -15,9 +15,11 @@
   },
   "devDependencies": {
     "@cloudflare/ai": "^1.0.50",
-    "@cloudflare/workers-types": "^4.20240208.0",
+    "@cloudflare/vitest-pool-workers": "^0.1.2",
+    "@cloudflare/workers-types": "^4.20240314.0",
     "esbuild": "^0.15.15",
-    "vitest": "^1.2.1",
-    "wrangler": "^3.28.3"
+    "vite-node": "^1.4.0",
+    "vitest": "1.3.0",
+    "wrangler": "^3.34.2"
   }
 }

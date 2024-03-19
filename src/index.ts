@@ -1,9 +1,9 @@
 import { Hono } from 'hono';
 import { ParseRSSFeed } from './lib/rss-parser';
-import { createEmbedding, similarEmbeddingIds } from './lib/embeddings';
 import { setupDb } from './lib/setup';
 import { getFeeds, addFeed, deleteFeed, updateFeed, fetchFeedData } from './lib/feed-processor';
 import { Bindings } from '../worker-configuration';
+import { getHash } from './lib/item-processor';
 
 const app = new Hono<{ Bindings: Bindings }>()
 
@@ -69,27 +69,18 @@ app.delete('/sites', async (c) => {
   }
 })
 
-/*app.get('/embeddings/create', async (c) => {
+app.get('/items', async (c) => {
   try {
-    const embedding = await createEmbedding(c.env, 4, 'I have a quiz');
-    return c.json(embedding);
+    const { results } = await c.env.DB.prepare('SELECT * FROM item').all()
+    return c.json(results)
   } catch (error) {
-    return c.text(error.message);
-  }
-})
-
-app.get('/embeddings/get', async (c) => {
-  try {
-    const result = await similarEmbeddingIds(c.env, 'Here lays a test');
-    return c.json(result);
-  } catch (error) {
-    return c.text(error.message);
+    return c.json(error.message)
   }
 })
 
 app.get('/rss', async (c) => {
-  //const url = 'https://crtv.dev/feed'; // ghost site
-  const url = 'https://ryanhayes.net/feed/'; // wordpress site
+  //const url = new URL('https://crtv.dev/feed'); // ghost site
+  const url = new URL('https://ryanhayes.net/feed/'); // wordpress site
   if (!url) {
     return c.text('Please provide a url');
   }
@@ -97,10 +88,11 @@ app.get('/rss', async (c) => {
   try {
     const feed = await ParseRSSFeed(url);
     console.log(feed);
+    console.log(await getHash(feed.items[0]))
     return c.json(feed);
   } catch (error) {
     return c.text(error.message);
   }
-})*/
+})
 
 export default app
