@@ -14,13 +14,22 @@ export async function ParseRSSFeed(url: URL) {
     }
 
     // fetch the feed
-    const feed = await fetchUrl(url).then(parseFeed);
+    const res = await fetchUrl(url);
+    if (res === null) {
+        throw new Error('Failed to fetch feed');
+    }
+    const feed = await parseFeed(res);
     return feed;
 }
 
 async function fetchUrl(url: URL) {
     return fetch(url.toString())
-        .then(response => response.text())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch feed: ' + response.statusText);
+            }
+            return response.text();
+        })
         .catch(error => {
             throw new Error('Failed to fetch feed: ' + error.message);
         });
