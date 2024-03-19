@@ -13,9 +13,14 @@ describe("Rss Parser", () => {
         expect(feed.items.length).toBeGreaterThan(0);
     });
 
-    it("should parse a feed from remote Ghost", async () => {
+    it("should parse a feed from remote Ghost", async ({ skip }) => {
         const url = new URL("https://crtv.dev/feed");
-        const feed: any = await ParseRSSFeed(url);
+        const feed: any = await ParseRSSFeed(url).catch((error) => {
+            if (error.message.includes("Failed to fetch feed: Forbidden")) {
+                console.log(error.message);
+                skip();
+            }
+        });
         expect(feed.title).toBe("CRTV DEV");
         expect(feed.link).toBe("https://crtv.dev/");
         expect(feed.description).toBe("Web Development and Information Technology Articles for Creative Developers");
@@ -30,9 +35,14 @@ describe("Rss Parser", () => {
         expect(feed.items.length).toBeGreaterThan(0);
     });
 
-    it("should parse a feed from remote WordPress", async () => {
+    it("should parse a feed from remote WordPress", async ({ skip }) => {
         const url = new URL("https://ryanhayes.net/feed/");
-        const feed: any = await ParseRSSFeed(url);
+        const feed: any = await ParseRSSFeed(url).catch((error) => {
+            if (error.message.includes("Failed to fetch feed: Forbidden")) {
+                console.log(error.message);
+                skip();
+            }
+        });
         expect(feed.title).toBe("Ryan Hayes");
         expect(feed.link).toBe("https://ryanhayes.net/");
         expect(feed.description).toBe("Software and Startup Skills to Boost Your Business and Career");
