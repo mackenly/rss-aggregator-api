@@ -14,6 +14,10 @@ Explore [pgvector](https://github.com/pgvector/pgvector) and SQLite options for 
 - Make ranking algorithm weights customizable and configurable via environment variables
 - Include GitHub Actions for CI/CD
 
+## Random TODOs
+- Create indexes for DB
+- Create setup script for DB
+
 ### Process
 - CRON to get newly updated RSS feeds and update ranked feed
 - Hash items to prevent duplicates, update existing items if changed

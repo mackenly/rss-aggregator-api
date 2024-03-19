@@ -5,8 +5,8 @@
       "ES2020"
     ],
     "types": [
-      "jest",
-      "@cloudflare/workers-types"
+      "@cloudflare/workers-types",
+      "@cloudflare/vitest-pool-workers"
     ]
   }
 }

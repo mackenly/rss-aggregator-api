@@ -2,3 +2,20 @@ name="rss-aggregator-api"
 main="src/index.ts"
 
 compatibility_date = "2022-11-22"
+compatibility_flags = [ "nodejs_compat" ]
+
+[vars]
+SIMILARITY_CUTOFF = 0.1
+TOP_K = 3
+
+[ai]
+binding = "AI"
+
+[[vectorize]]
+binding = "VECTORIZE_INDEX" # available within your Worker on env.VECTORIZE_INDEX
+index_name = "rss-aggregator-api-vector-index"
+
+[[d1_databases]]
+binding = "DB" # i.e. available in your Worker on env.DB
+database_name = "rss-aggregator-api-database"
+database_id = "2e7bc2d9-5ffa-4b8e-85af-d42146f72bd2"
